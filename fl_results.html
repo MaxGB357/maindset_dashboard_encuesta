@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Adopción IA - Falabella Legal</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles to complement Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background for the page */
+        }
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            width: 100%;
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .table-bar {
+            display: block;
+            height: 100%;
+            background-color: #3b82f6; /* Blue-500 */
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-md sticky top-0 z-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Dashboard de Adopción de IA</h1>
+                    <p class="text-sm text-gray-500">Resultados Encuesta Equipo Falabella Legal</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Section 1: KPIs -->
+        <section id="kpi-section" class="mb-8">
+            <h2 id="kpi-title" class="text-xl font-bold mb-4">Análisis Global - Perfil de Participantes</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- KPI Cards -->
+                <div class="kpi-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-500">Total Participantes</h3>
+                    <p id="kpi-total" class="text-4xl font-extrabold text-blue-600 mt-2">23</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-500">Familiaridad con IA</h3>
+                    <p id="kpi-familiaridad" class="text-4xl font-extrabold text-blue-600 mt-2">3.60<span class="text-2xl text-gray-400">/5</span></p>
+                </div>
+                <div class="kpi-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-500">Mayor Fortaleza</h3>
+                    <p id="kpi-fortaleza-valor" class="text-4xl font-extrabold text-emerald-600 mt-2">4.35<span class="text-2xl text-gray-400">/5</span></p>
+                    <span id="kpi-fortaleza-label" class="text-sm text-gray-500">Equipo Receptivo</span>
+                </div>
+                <div class="kpi-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-500">Principal Brecha</h3>
+                    <p id="kpi-brecha-valor" class="text-4xl font-extrabold text-rose-600 mt-2">2.40<span class="text-2xl text-gray-400">/5</span></p>
+                    <span id="kpi-brecha-label" class="text-sm text-gray-500">Conocimiento de Agentes</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Distribution Chart -->
+        <section class="grid grid-cols-1 gap-6 mb-8">
+             <div class="kpi-card">
+                 <div class="card-header">
+                    <h3 id="tiempo-title" class="text-lg font-semibold">Distribución de Tiempo en Tareas Operativas</h3>
+                    <p id="tiempo-insight" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="tiempoOperativoChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 3: Maturity Metrics -->
+        <section class="kpi-card mb-8">
+            <div class="card-header">
+                <h3 class="text-lg font-semibold">Métricas de Evaluación de Madurez IA</h3>
+                <p id="madurez-insight" class="text-sm text-gray-500 mt-1"></p>
+            </div>
+            <div class="chart-container" style="height: 400px;">
+                <canvas id="madurezChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Section 3.5: LLMs Utilizados -->
+        <section class="kpi-card mb-8">
+            <div class="card-header">
+                <h3 class="text-lg font-semibold">LLMs Más Utilizados</h3>
+                <p id="llms-insight" class="text-sm text-gray-500 mt-1"></p>
+            </div>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="llmsChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Section 4: Top Workflows -->
+        <section class="kpi-card mb-8">
+            <div class="card-header">
+                <h3 class="text-lg font-semibold">Top Workflows Solicitados</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">#</th>
+                            <th scope="col" class="px-4 py-3">Workflow</th>
+                            <th scope="col" class="px-4 py-3 text-center">Votaciones</th>
+                            <th scope="col" class="px-4 py-3 text-center">Dolor (1-5)</th>
+                            <th scope="col" class="px-4 py-3 text-center">Frecuencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workflows-table-body">
+                       <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 5: Open Questions & Needs -->
+        <section id="open-questions-section" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div id="lideres-container" class="kpi-card">
+                <div class="card-header">
+                    <h3 class="text-lg font-semibold">Necesidades de Líderes IA</h3>
+                    <p id="lideres-insight" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                 <div class="chart-container" style="height: 350px;">
+                    <canvas id="lideresChart"></canvas>
+                </div>
+            </div>
+             <div class="kpi-card">
+                <div class="card-header">
+                    <h3 class="text-lg font-semibold">Principal Beneficio Percibido de la IA</h3>
+                    <p id="beneficios-insight" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="beneficiosChart"></canvas>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="card-header">
+                    <h3 class="text-lg font-semibold">Mayor Preocupación o Reto</h3>
+                     <p id="retos-insight" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                 <div class="chart-container" style="height: 350px;">
+                    <canvas id="retosChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-4 bg-white border-t">
+        <p class="text-sm text-gray-500">Dashboard de Adopción de IA - MAIndset© 2025</p>
+    </footer>
+
+    <script>
+    // --- DATA MODEL ---
+    const dashboardData = {
+        global: {
+            title: 'Análisis Global - Falabella Legal',
+            kpis: {
+                total: 23,
+                familiaridad: 3.6,
+                fortaleza: 4.35,
+                brecha: 2.4
+            },
+            tiempo: {
+                labels: ['0-25%', '26-50%'],
+                data: [16, 7], // Corresponds to 69% and 31% of 23 participants
+                insight: 'El 69% del equipo dedica menos del 25% de su tiempo a tareas operativas.'
+            },
+            madurez: {
+                labels: ['Conocimiento LLMs', 'Prompt Engineering', 'Entendimiento Agentes IA', 'Lineamientos Claros', 'Acceso a Herramientas', 'Impulso Directivo', 'Confianza/Curiosidad', 'Preocupación Reemplazo', 'Preocupación Privacidad', 'Curva Aprendizaje', 'Equipo Receptivo'],
+                data: [3.2, 3.7, 2.4, 3.4, 3.5, 3.7, 4.3, 2.0, 3.5, 4.3, 4.3],
+                insight: 'Equipo muy receptivo y alta confianza, pero la brecha principal es el conocimiento sobre Agentes de IA.'
+            },
+            llms: {
+                labels: ['Microsoft Copilot', 'ChatGPT', 'Gemini', 'Grok'],
+                data: [91, 70, 48, 9],
+                insight: "Microsoft Copilot es la herramienta más utilizada (91%), seguida de cerca por ChatGPT (70%)."
+            },
+            workflows: [
+                { "rank": 1, "name": "Resumir y analizar contratos, escrituras y documentación legal", "votes": 18, "pain": 3.1, "freq": "Semanal" },
+                { "rank": 2, "name": "Investigación sobre temas estratégicos y tendencias", "votes": 17, "pain": 2.7, "freq": "Semanal" },
+                { "rank": 3, "name": "Analizar proyectos de ley y su impacto en el negocio", "votes": 17, "pain": 3.3, "freq": "Mensual" },
+                { "rank": 4, "name": "Clasificar y priorizar correos electrónicos (consultas legales urgentes, plazos procesales, etc.)", "votes": 17, "pain": 3.2, "freq": "Diaria" },
+                { "rank": 5, "name": "Redactar dictámenes legales y opiniones jurídicas", "votes": 13, "pain": 3.1, "freq": "Semanal" },
+                { "rank": 6, "name": "Crear memorándums legales ejecutivos para directorios", "votes": 12, "pain": 3.2, "freq": "Mensual" },
+                { "rank": 7, "name": "Monitorear fuentes sectoriales y regulatorias", "votes": 11, "pain": 2.8, "freq": "Semanal" },
+                { "rank": 8, "name": "Redactar respuestas estándar y comunicaciones formales a solicitudes repetitivas", "votes": 11, "pain": 2.8, "freq": "Semanal" },
+                { "rank": 9, "name": "Documentar reuniones en memorándums legales, actas o minutas.", "votes": 10, "pain": 3.3, "freq": "Semanal" },
+                { "rank": 10, "name": "KPIs de carga, SLAs, riesgo y presupuesto para gestión y mejora continua.", "votes": 9, "pain": 3.0, "freq": "Mensual" },
+                { "rank": 11, "name": "Generación de reportes de estado de expedientes y casos", "votes": 9, "pain": 3.0, "freq": "Mensual" },
+                { "rank": 12, "name": "Analizar y comparar cláusulas contractuales para identificar términos de mercado", "votes": 8, "pain": 2.9, "freq": "Semanal" },
+                { "rank": 13, "name": "Due diligence legal y extraer riesgos críticos", "votes": 7, "pain": 3.6, "freq": "Semanal" },
+                { "rank": 14, "name": "Analizar tendencias jurisprudenciales y precedentes", "votes": 6, "pain": 2.8, "freq": "Semanal" },
+                { "rank": 15, "name": "Generar primeros borradores de contratos estándar basados en templates", "votes": 6, "pain": 3.7, "freq": "Semanal" }
+            ],
+            lideres: {
+                labels: [['Capacitación', 'Especializada'], ['Disponibilidad de', 'Herramientas'], ['Consultoría', 'Externa'], ['Presupuesto', 'Dedicado'], ['Definición de', 'Procesos']],
+                data: [87.0, 65.2, 47.8, 43.5, 30.4], // Percentages based on 23 participants
+                insight: "La Capacitación (87%) es la necesidad más crítica para los líderes de Falabella Legal."
+            },
+            beneficios: {
+                labels: [['Ahorro de', 'Tiempo'], ['Apoyo Estratégico/', 'Valor Agregado'], ['Eficiencia /', 'Productividad']],
+                data: [47.8, 26.1, 26.1], // Percentages based on 23 participants
+                insight: "El Ahorro de Tiempo (48%) es el principal beneficio, seguido del apoyo estratégico y la eficiencia."
+            },
+            retos: {
+                labels: [['Formación /', 'Talento'], ['Calidad /', 'Fiabilidad'], ['Seguridad /', 'Datos'], ['Cambio Cultural'], ['Costos / ROI']],
+                data: [47.8, 43.5, 26.1, 13.0, 13.0], // Percentages based on 23 participants
+                insight: "La Formación y el desarrollo de talento (48%) es la principal preocupación, seguida de la calidad de los resultados."
+            }
+        }
+    };
+    
+    // --- CHART INSTANCES & CONFIGS ---
+    let tiempoOperativoChart, madurezChart, llmsChart, lideresChart, beneficiosChart, retosChart;
+
+    const chartColors = {
+        blue: '#3b82f6',
+        sky: '#0ea5e9',
+        teal: '#14b8a6',
+        emerald: '#10b981',
+        rose: '#f43f5e',
+        orange: '#f97316',
+        purple: '#a855f7',
+        yellow: '#eab308'
+    };
+    
+    // Global chart options
+    Chart.defaults.font.family = 'Inter';
+    Chart.defaults.plugins.legend.position = 'bottom';
+    
+    /**
+     * Creates or updates a pie/doughnut chart.
+     */
+    function renderPieDoughnutChart(ctx, chartInstance, type, labels, data, chartColorsArray) {
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+        return new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Participantes',
+                    data: data,
+                    backgroundColor: chartColorsArray,
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.raw;
+                                const total = context.chart.getDatasetMeta(0).total;
+                                const percentage = ((value / total) * 100).toFixed(1) + '%';
+                                label += `${value} (${percentage})`;
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates or updates a radar chart.
+     */
+    function renderRadarChart(ctx, chartInstance, labels, globalData) {
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+        
+        const datasets = [{
+            label: 'Promedio Global',
+            data: globalData,
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2
+        }];
+
+        return new Chart(ctx, {
+            type: 'radar',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        pointLabels: {
+                            font: { size: 10 }
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates or updates a horizontal bar chart.
+     */
+    function renderHorizontalBarChart(ctx, chartInstance, labels, data, dataLabel, backgroundColor) {
+         if (chartInstance) {
+            chartInstance.destroy();
+        }
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: dataLabel,
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderColor: backgroundColor,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%' }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Populates the workflows table with data.
+     */
+    function populateWorkflowsTable(workflowsData) {
+        const tableBody = document.getElementById('workflows-table-body');
+        tableBody.innerHTML = ''; // Clear previous data
+        const maxVotes = Math.max(...workflowsData.map(w => w.votes), 0);
+        
+        workflowsData.forEach(workflow => {
+            const painColor = workflow.pain >= 4.0 ? 'bg-red-500' : workflow.pain >= 3.5 ? 'bg-yellow-500' : 'bg-green-500';
+            const votePercentage = (maxVotes > 0) ? (workflow.votes / maxVotes) * 100 : 0;
+
+            const row = `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">${workflow.rank}</th>
+                    <td class="px-4 py-3">${workflow.name}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-between">
+                            <span class="mr-2 font-medium">${workflow.votes}</span>
+                            <div class="w-2/3 bg-gray-200 rounded-full h-2.5">
+                                <div class="table-bar h-2.5 rounded-full" style="width: ${votePercentage}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="text-white text-xs font-medium px-2.5 py-0.5 rounded-full ${painColor}">${workflow.pain.toFixed(1)}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="text-gray-700 text-xs font-medium">${workflow.freq}</span>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    /**
+     * Updates all dashboard components with global data.
+     */
+    function updateDashboard() {
+        const data = dashboardData.global;
+        
+        // 1. Update KPIs
+        document.getElementById('kpi-title').textContent = data.title;
+        document.getElementById('kpi-total').textContent = data.kpis.total;
+        document.getElementById('kpi-familiaridad').innerHTML = `${data.kpis.familiaridad.toFixed(2)}<span class="text-2xl text-gray-400">/5</span>`;
+        document.getElementById('kpi-fortaleza-valor').innerHTML = `${data.kpis.fortaleza.toFixed(2)}<span class="text-2xl text-gray-400">/5</span>`;
+        document.getElementById('kpi-brecha-valor').innerHTML = `${data.kpis.brecha.toFixed(2)}<span class="text-2xl text-gray-400">/5</span>`;
+        document.getElementById('kpi-fortaleza-label').textContent = 'Equipo Receptivo';
+        document.getElementById('kpi-brecha-label').textContent = 'Conocimiento de Agentes';
+
+
+        // 2. Update Tiempo Operativo Chart (Doughnut)
+        document.getElementById('tiempo-insight').textContent = data.tiempo.insight;
+        tiempoOperativoChart = renderPieDoughnutChart(
+            document.getElementById('tiempoOperativoChart').getContext('2d'),
+            tiempoOperativoChart,
+            'doughnut',
+            data.tiempo.labels,
+            data.tiempo.data,
+            [chartColors.blue, chartColors.sky, chartColors.orange]
+        );
+        
+        // 3. Update Madurez Chart (Radar)
+        document.getElementById('madurez-insight').textContent = data.madurez.insight;
+        madurezChart = renderRadarChart(
+            document.getElementById('madurezChart').getContext('2d'),
+            madurezChart,
+            data.madurez.labels,
+            data.madurez.data
+        );
+        
+        // 3.5 Update LLMs Chart
+        document.getElementById('llms-insight').textContent = data.llms.insight;
+        llmsChart = renderHorizontalBarChart(
+            document.getElementById('llmsChart').getContext('2d'),
+            llmsChart,
+            data.llms.labels,
+            data.llms.data,
+            '% de Uso',
+            'rgba(168, 85, 247, 0.7)' // Purple
+        );
+
+        // 4. Update Workflows Table
+        populateWorkflowsTable(data.workflows);
+
+        // 5. Update Leaders Needs Chart
+        document.getElementById('lideres-insight').textContent = data.lideres.insight;
+        lideresChart = renderHorizontalBarChart(
+            document.getElementById('lideresChart').getContext('2d'),
+            lideresChart,
+            data.lideres.labels,
+            data.lideres.data,
+            '% de Menciones',
+            'rgba(59, 130, 246, 0.7)'
+        );
+
+        // 6. Update Open Questions Charts
+        document.getElementById('beneficios-insight').textContent = data.beneficios.insight;
+        beneficiosChart = renderHorizontalBarChart(
+            document.getElementById('beneficiosChart').getContext('2d'),
+            beneficiosChart,
+            data.beneficios.labels,
+            data.beneficios.data,
+            '% de Menciones',
+            'rgba(16, 185, 129, 0.7)'
+        );
+        
+        document.getElementById('retos-insight').textContent = data.retos.insight;
+        retosChart = renderHorizontalBarChart(
+            document.getElementById('retosChart').getContext('2d'),
+            retosChart,
+            data.retos.labels,
+            data.retos.data,
+            '% de Menciones',
+            'rgba(244, 63, 94, 0.7)'
+        );
+
+    }
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initial load with global data
+        updateDashboard();
+    });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta Explora: Madurez y Mapeo de Workflows con IA Generativa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex; /* For centering the container */
+            align-items: flex-start; /* Align to top for scrollability */
+            justify-content: center; /* Center horizontally */
+        }
+
+        .survey-container {
+            width: 100%; /* Full width on small screens */
+            max-width: 800px; /* Max width on larger screens */
+            margin: 20px auto; /* Vertical margin, auto for horizontal centering */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 8px; /* Slightly thicker for better visibility */
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #81C784); /* Softer green gradient */
+            width: 0%;
+            transition: width 0.4s ease; /* Smoother transition */
+            border-radius: 0 4px 4px 0; /* Rounded edge for fill */
+        }
+
+        .survey-header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 30px 40px; /* Adjusted padding */
+            text-align: center;
+        }
+
+        .survey-title {
+            font-size: 1.8em; /* Adjusted for responsiveness */
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .survey-subtitle {
+            font-size: 1em; /* Adjusted for responsiveness */
+            opacity: 0.9;
+        }
+
+        .survey-content {
+            padding: 30px; /* Adjusted padding */
+        }
+
+        .block {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out; /* Smoother animation */
+        }
+
+        .block.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .block-title {
+            font-size: 1.4em; /* Adjusted for responsiveness */
+            color: #1E88E5; /* Slightly different blue */
+            margin-bottom: 25px;
+            border-bottom: 2px solid #BBDEFB; /* Lighter border */
+            padding-bottom: 12px;
+        }
+
+        .intro-text {
+            background: #E3F2FD; /* Lighter blue background */
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #2196F3;
+            margin-bottom: 30px;
+            line-height: 1.7; /* Increased line height */
+            font-size: 0.95em;
+        }
+        .intro-text h2 {
+            font-size: 1.3em;
+            color: #1565C0; /* Darker blue for heading */
+            margin-bottom: 10px;
+        }
+        .intro-text p {
+            margin-bottom: 10px;
+        }
+        .intro-text strong {
+            color: #1565C0;
+        }
+        .intro-text em {
+            color: #555;
+            font-style: italic;
+        }
+
+
+        .question {
+            margin-bottom: 30px; /* Increased spacing */
+            padding: 20px;
+            background: #fdfdfd; /* Slightly off-white */
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+        }
+
+        .question-label {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.05em; /* Slightly larger label */
+            display: block; /* Ensure it takes full width */
+        }
+        .question-label strong {
+            color: #1E88E5;
+        }
+        .question-label .instruction {
+            font-size: 0.85em;
+            font-weight: normal;
+            color: #555;
+            display: block;
+            margin-top: 5px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ccc; /* Standard border */
+            border-radius: 8px;
+            font-size: 1em; /* Relative font size */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fff;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2); /* Softer focus shadow */
+        }
+        textarea {
+            min-height: 80px; /* Minimum height for textareas */
+            resize: vertical; /* Allow vertical resize */
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column; /* Stack options vertically */
+            gap: 12px; /* Space between options */
+            margin-top: 10px;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease; /* Faster transition */
+        }
+         .checkbox-option input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #2196F3;
+        }
+        .checkbox-option .otro-input-container {
+            margin-left: 10px;
+            flex-grow: 1;
+        }
+         .checkbox-option .otro-input-container input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 0.9em;
+            border-radius: 6px;
+        }
+
+
+        .radio-option:hover, .checkbox-option:hover {
+            border-color: #64B5F6; /* Lighter blue on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+        }
+
+        .radio-option.selected, .checkbox-option.selected {
+            border-color: #2196F3;
+            background: #E3F2FD; /* Light blue background when selected */
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+        }
+        .radio-option.selected span, .checkbox-option.selected span:not(.otro-input-container) {
+            font-weight: 500; /* Slightly bolder text when selected */
+            color: #1967D2;
+        }
+
+
+        .radio-option input, .checkbox-option input[type="radio"] { /* Keep specific for radio if needed */
+            margin-right: 10px; /* Increased margin */
+            width: 18px; /* Custom size for radio/checkbox */
+            height: 18px;
+            accent-color: #2196F3; /* Color the check/dot */
+        }
+
+        .likert-scale {
+            display: flex;
+            justify-content: space-around; /* Even spacing */
+            align-items: center;
+            margin: 20px 0 10px 0; /* Adjusted margin */
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .likert-labels {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px; /* Reduced gap */
+            width: 100%;
+            font-size: 0.75em; /* Smaller labels */
+            color: #555; /* Darker grey */
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .likert-labels span {
+            padding: 0 2px;
+        }
+
+        .scale-option {
+            width: 38px; /* Slightly smaller */
+            height: 38px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            background-color: #f9f9f9; /* Light background */
+        }
+
+        .scale-option:hover {
+            border-color: #64B5F6;
+            transform: scale(1.08); /* Slightly larger scale on hover */
+            background-color: #E3F2FD;
+        }
+
+        .scale-option.selected {
+            background: #2196F3;
+            color: white;
+            border-color: #1976D2; /* Darker border when selected */
+            transform: scale(1.1);
+        }
+
+        .workflow-category {
+            background: white;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .category-header {
+            background: #64B5F6; /* Lighter blue for category header */
+            color: white;
+            padding: 12px 20px; /* Adjusted padding */
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .category-content {
+            padding: 15px 20px; /* Adjusted padding */
+        }
+
+        .workflow-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0; /* Increased padding */
+            border-bottom: 1px solid #f0f0f0;
+        }
+         .workflow-item label { /* Make label clickable for checkbox */
+            flex-grow: 1;
+            font-size: 0.95em;
+            cursor: pointer;
+            margin-left: 5px; /* Space between checkbox and label text */
+        }
+
+
+        .workflow-item:last-child {
+            border-bottom: none;
+        }
+
+        .workflow-checkbox {
+            margin-right: 10px; /* Adjusted margin */
+            width: 18px;
+            height: 18px;
+            accent-color: #2196F3;
+            flex-shrink: 0; /* Prevent checkbox from shrinking */
+        }
+
+
+        .workflow-details {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .workflow-details h3 {
+            font-size: 1.2em;
+            color: #1E88E5;
+            margin-bottom: 15px;
+        }
+
+        .workflow-details.active {
+            display: block;
+        }
+        .detail-row-container { /* Wrapper for each workflow's details */
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .detail-row-container > div:first-child { /* Workflow name styling */
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2196F3;
+            font-size: 1.05em;
+        }
+
+        .detail-row { /* For Frequency, Pain, Level selects */
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 15px;
+            margin-bottom: 10px; /* Reduced margin */
+            align-items: center;
+        }
+
+        .detail-item {
+            flex: 1;
+            min-width: 150px; /* Minimum width for detail items */
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.85em; /* Smaller label */
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .detail-item select {
+            padding: 10px 12px; /* Adjusted padding */
+            font-size: 0.95em;
+        }
+
+        .ranking-list {
+            min-height: 150px; /* Reduced min-height */
+            border: 2px dashed #B0BEC5; /* Softer dashed border */
+            border-radius: 8px;
+            padding: 15px;
+            background: #ECEFF1; /* Light grey background */
+            margin-top: 10px;
+        }
+        .ranking-list p { /* Placeholder text styling */
+            color: #546E7A;
+            text-align: center;
+            font-style: italic;
+            padding: 20px 0;
+        }
+
+        .ranking-item {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: grab; /* Indicate draggable */
+            border: 1px solid #CFD8DC; /* Lighter border */
+            transition: all 0.2s ease;
+            display: flex; /* For aligning number and text */
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .ranking-item:hover {
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            border-color: #90A4AE;
+            transform: translateY(-1px);
+        }
+        .ranking-item.dragging {
+            opacity: 0.6;
+            background: #E3F2FD;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            cursor: grabbing;
+        }
+        .ranking-item span:first-child { /* Number styling */
+            font-weight: bold;
+            margin-right: 10px;
+            color: #546E7A;
+            min-width: 20px; /* Ensure space for two digits */
+        }
+        .ranking-item span:last-child { /* Drag handle icon */
+            margin-left: auto;
+            color: #78909C;
+            cursor: grab;
+            font-size: 1.2em;
+        }
+
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically align items if they wrap */
+            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+            gap: 15px; /* Gap between buttons if they wrap */
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 25px; /* Adjusted padding */
+            border: none;
+            border-radius: 8px;
+            font-size: 1em; /* Relative font size */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            min-width: 120px; /* Minimum width for buttons */
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+            box-shadow: 0 2px 5px rgba(33, 150, 243, 0.2);
+        }
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: #78909C; /* Greyish blue */
+            color: white;
+            box-shadow: 0 2px 5px rgba(120, 144, 156, 0.2);
+        }
+        .btn-secondary:hover {
+            background: #546E7A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(120, 144, 156, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .completion-message {
+            text-align: center;
+            padding: 50px 30px; /* Adjusted padding */
+        }
+        .completion-title {
+            font-size: 1.8em;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+        .completion-text {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .validation-message {
+            color: #D32F2F; /* Darker red */
+            font-size: 0.9em;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #FFCDD2; /* Lighter red background */
+            border: 1px solid #EF9A9A; /* Reddish border */
+            border-radius: 6px;
+            display: none;
+            text-align: center; /* Center align validation message */
+            width: 100%; /* Make it full width in its container */
+        }
+        .validation-message.show {
+            display: block;
+            animation: shake 0.3s; /* Shake animation for errors */
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        
+        /* Additional Workflows Styling */
+        .additional-workflow {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+        .additional-workflow .form-group label {
+            font-size: 0.9em;
+            color: #444;
+        }
+        #addWorkflowBtn {
+            margin-top: 10px;
+            background-color: #90A4AE; /* Different color for add button */
+        }
+        #addWorkflowBtn:hover {
+            background-color: #607D8B;
+        }
+        .btn-remove-wf { /* Styling for remove button in additional workflows */
+            background: #EF5350; /* Reddish color */
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+        .btn-remove-wf:hover {
+            background: #D32F2F;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 800px) { /* Apply when screen is narrower than container max-width */
+            body {
+                padding: 10px; /* Reduce body padding */
+            }
+            .survey-container {
+                margin: 10px; /* Reduce margin */
+                border-radius: 15px; /* Slightly smaller radius */
+            }
+            .survey-header {
+                padding: 25px 20px;
+            }
+            .survey-title {
+                font-size: 1.6em;
+            }
+            .survey-subtitle {
+                font-size: 0.95em;
+            }
+            .survey-content {
+                padding: 20px;
+            }
+            .block-title {
+                font-size: 1.3em;
+            }
+            .intro-text {
+                padding: 15px;
+                font-size: 0.9em;
+            }
+            .question {
+                padding: 15px;
+            }
+            .question-label {
+                font-size: 1em;
+            }
+            input[type="text"], input[type="number"], textarea, select {
+                padding: 10px 14px;
+                font-size: 0.95em;
+            }
+            .radio-option, .checkbox-option {
+                padding: 10px 14px;
+            }
+            .likert-scale {
+                padding: 10px;
+                flex-wrap: wrap; /* Allow scale options to wrap */
+                justify-content: center; /* Center wrapped items */
+                gap: 5px;
+            }
+            .scale-option {
+                width: 35px;
+                height: 35px;
+            }
+            .likert-labels {
+                font-size: 0.7em;
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Responsive columns */
+            }
+            .category-header {
+                font-size: 1em;
+                padding: 10px 15px;
+            }
+            .category-content {
+                padding: 10px 15px;
+            }
+            .workflow-item {
+                padding: 10px 0;
+            }
+            .detail-row {
+                flex-direction: column; /* Stack detail items vertically */
+                gap: 10px;
+                align-items: stretch; /* Stretch items to full width */
+            }
+            .detail-item {
+                min-width: 0; /* Reset min-width for stacked items */
+            }
+            .navigation-buttons {
+                flex-direction: column; /* Stack buttons vertically */
+                gap: 10px;
+            }
+            .btn {
+                width: 100%; /* Make buttons full width */
+            }
+            .completion-message {
+                padding: 30px 20px;
+            }
+            .completion-title {
+                font-size: 1.6em;
+            }
+            .completion-text {
+                font-size: 1em;
+            }
+        }
+         @media (max-width: 480px) { /* Further adjustments for very small screens */
+            .survey-header {
+                padding: 20px 15px;
+            }
+            .survey-title {
+                font-size: 1.4em;
+            }
+            .survey-subtitle {
+                font-size: 0.85em;
+            }
+            .survey-content {
+                padding: 15px;
+            }
+             .block-title {
+                font-size: 1.2em;
+            }
+            .intro-text {
+                font-size: 0.85em;
+            }
+            .question-label {
+                font-size: 0.95em;
+            }
+            .likert-labels span {
+                line-height: 1.3; /* Improve readability of wrapped labels */
+            }
+             .ranking-item span:last-child { /* Drag handle icon */
+                font-size: 1.1em;
+            }
+        }
+
+    </style>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="survey-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="survey-header">
+            <h1 class="survey-title">Encuesta Explora</h1>
+            <p class="survey-subtitle">Diagnóstico para personalizar tu experiencia GenAI</p>
+        </div>
+
+        <div class="survey-content">
+            <div class="block active" id="intro">
+                <div class="intro-text">
+                    <h2>¡Bienvenido(a) al Programa Explora de MAIndset!</h2>
+                    <p>En los próximos días participarás en una serie de workshops prácticos donde aprenderás a aplicar la IA Generativa a tus retos reales.</p>
+                    <p>Antes de empezar, te pedimos contestar esta breve encuesta que nos ayudará a medir tu familiaridad con la tecnología y a detectar los flujos de trabajo, personales y de equipo, que podrían beneficiarse con la IA Generativa.</p>
+                    <p>Con esta información adaptaremos los contenidos, ejemplos y ejercicios para que cada sesión responda a tus necesidades y genere valor desde el primer día.</p>
+                    <p><em>Tus respuestas son confidenciales y se usarán únicamente para personalizar el programa y priorizar oportunidades de mejora.</em></p>
+                    <p><strong>Tiempo estimado para completar: 10 minutos</strong></p>
+                </div>
+                <div class="navigation-buttons">
+                    <div style="flex-grow: 1;"></div> <button class="btn btn-primary" onclick="nextBlock()">Comenzar Encuesta</button>
+                </div>
+            </div>
+
+            <div class="block" id="blockA">
+                <h2 class="block-title">Bloque A: Datos Básicos</h2>
+                
+                <div class="question">
+                    <label class="question-label" for="nombre_completo_a">1. Nombre completo</label>
+                    <input type="text" id="nombre_completo_a" name="nombre_completo" placeholder="Ej: Juan Pérez">
+                </div>
+
+                <div class="question">
+                    <label class="question-label" for="cargo_actual_a">2. Cargo actual</label>
+                    <input type="text" id="cargo_actual_a" name="cargo_actual" placeholder="Ej: Gerente de Marketing">
+                </div>
+
+                <div class="question">
+                    <label class="question-label" for="area_departamento_a">3. Área o departamento</label>
+                    <input type="text" id="area_departamento_a" name="area_departamento" placeholder="Ej: Marketing Digital, Recursos Humanos, Finanzas">
+                </div>
+
+                <div class="question">
+                    <label class="question-label">4. Tamaño de tu equipo directo (personas que te reportan)</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="tamano_equipo" value="0"> <span>0 (No tengo equipo a cargo)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tamano_equipo" value="1-5">
+                            <span>1-5</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tamano_equipo" value="6-15">
+                            <span>6-15</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tamano_equipo" value="16-30">
+                            <span>16-30</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tamano_equipo" value=">30">
+                            <span>Más de 30</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">5. ¿Qué porcentaje de tu tiempo laboral dedicas a tareas repetitivas o rutinarias —no necesariamente operativas— que podrías automatizar o acelerar con IA?
+                        <span class="instruction">(Por ejemplo: búsquedas de información, generación de reportes, resúmenes de texto, consolidación de datos, etc.)</span>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="tiempo_operativo" value="0-25">
+                            <span>0-25%</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tiempo_operativo" value="26-50">
+                            <span>26-50%</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tiempo_operativo" value="51-75">
+                            <span>51-75%</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tiempo_operativo" value="76-100">
+                            <span>76-100%</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">6. Autoevaluación de familiaridad con herramientas de IA Generativa (como ChatGPT, Claude, Gemini, Copilot, etc.)</label>
+                    <div class="likert-scale">
+                        <div class="scale-option" data-value="1">1</div>
+                        <div class="scale-option" data-value="2">2</div>
+                        <div class="scale-option" data-value="3">3</div>
+                        <div class="scale-option" data-value="4">4</div>
+                        <div class="scale-option" data-value="5">5</div>
+                    </div>
+                    <div class="likert-labels">
+                        <span>Nunca las he usado / No sé qué son</span>
+                        <span>Las he usado muy rara vez / superficialmente</span>
+                        <span>Las uso ocasionalmente para tareas puntuales</span>
+                        <span>Las uso frecuentemente y empiezo a ver su potencial</span>
+                        <span>Las uso a diario, son parte esencial de mi trabajo</span>
+                    </div>
+                    <input type="hidden" name="familiaridad_score" id="familiaridadScore">
+                </div>
+
+                <div class="question">
+                    <label class="question-label">7. ¿Cuál de los siguientes modelos de IA Generativa has utilizado en los últimos 30 días?
+                        <span class="instruction">Puedes seleccionar más de una opción.</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="ChatGPT (OpenAI)">
+                            <span>ChatGPT (OpenAI)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Claude (Anthropic)">
+                            <span>Claude (Anthropic)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Gemini (Google)">
+                            <span>Gemini (Google)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="DeepSeek">
+                            <span>DeepSeek</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Copilot (Microsoft)">
+                            <span>Copilot (Microsoft)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Grok (xAI)">
+                            <span>Grok (xAI)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Perplexity">
+                            <span>Perplexity</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="LLaMA (Meta)">
+                            <span>LLaMA (Meta)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="modelos_ia_utilizados" value="Ninguno" id="ninguno_checkbox">
+                            <span>Ninguno</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="validation-message" id="validationMessageA">Por favor, responde todas las preguntas de este bloque para continuar.</div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevBlock()">Anterior</button>
+                    <button class="btn btn-primary" onclick="nextBlock()">Siguiente</button>
+                </div>
+            </div>
+
+            <div class="block" id="blockB">
+                <h2 class="block-title">Bloque B: Conocimiento y Confianza en IA</h2>
+
+                <div class="question">
+                    <label class="question-label"><strong>B.1 Conocimientos clave sobre IA Generativa</strong><br>Indica tu nivel de acuerdo con las siguientes afirmaciones:</label>
+                    
+                    <div class="question sub-question"> <label class="question-label">Comprendo qué es un LLM (Large Language Model o Modelo Lingüístico Extenso)</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b1_1" id="b1_1">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Sé qué es la "ingeniería de prompts" (prompt engineering) y su importancia</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                           <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b1_2" id="b1_2">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Entiendo cómo diseñar y desplegar agentes internos (custom GPTs)</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b1_3" id="b1_3">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Entiendo cómo conectar un LLM a fuentes propias (documentos, bases de datos) para generar respuestas contextuales (RAG)</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b1_4" id="b1_4">
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label"><strong>B.2 Termómetro Organizacional sobre IA</strong><br>Respecto a tu entorno laboral actual:</label>
+                    
+                    <div class="question sub-question">
+                        <label class="question-label">Mi área/empresa dispone de lineamientos claros sobre el uso ético y seguro de la IA</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral / No lo sé</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b2_1" id="b2_1">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Tenemos acceso oficial y fomentado a herramientas o licencias de IA Generativa</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                         <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral / No lo sé</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b2_2" id="b2_2">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">La dirección de mi empresa/área impulsa activamente la exploración o pilotos con IA y provee recursos para ello</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                           <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral / No lo sé</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b2_3" id="b2_3">
+                    </div>
+                </div>
+
+                <div class="question">
+                     <label class="question-label"><strong>B.3 Percepción Personal y Barreras</strong><br>Sobre tu propia perspectiva:</label>
+                    
+                    <div class="question sub-question">
+                        <label class="question-label">Siento confianza y curiosidad para experimentar con IA Generativa en mis tareas diarias</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b3_1" id="b3_1">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Me preocupa que la IA pueda reemplazar aspectos significativos de mi trabajo actual</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b3_2" id="b3_2">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Me preocupa la privacidad, confidencialidad o seguridad de los datos al usar herramientas de IA</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b3_3" id="b3_3">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Siento que tengo las capacidades para aprender y adaptarme al ritmo con que avanza la IA Generativa</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                           <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b3_4" id="b3_4">
+                    </div>
+
+                    <div class="question sub-question">
+                        <label class="question-label">Mi equipo de trabajo está, en general, abierto y receptivo a adoptar nuevas herramientas tecnológicas automatizadas</label>
+                        <div class="likert-scale">
+                            <div class="scale-option" data-value="1">1</div>
+                            <div class="scale-option" data-value="2">2</div>
+                            <div class="scale-option" data-value="3">3</div>
+                            <div class="scale-option" data-value="4">4</div>
+                            <div class="scale-option" data-value="5">5</div>
+                        </div>
+                        <div class="likert-labels">
+                            <span>Totalmente en desacuerdo</span>
+                            <span>En desacuerdo</span>
+                            <span>Neutral / No lo sé</span>
+                            <span>De acuerdo</span>
+                            <span>Totalmente de acuerdo</span>
+                        </div>
+                        <input type="hidden" name="b3_5" id="b3_5">
+                    </div>
+                </div>
+                <div class="validation-message" id="validationMessageB">Por favor, responde todas las preguntas de este bloque para continuar.</div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevBlock()">Anterior</button>
+                    <button class="btn btn-primary" onclick="nextBlock()">Siguiente</button>
+                </div>
+            </div>
+
+            <div class="block" id="blockC">
+                <h2 class="block-title">Bloque C: Mapeo de Tareas y Workflows</h2>
+                
+                <div class="intro-text">
+                    <h3>Instrucciones:</h3>
+                    <ol>
+                        <li>A continuación, verás una lista de tareas comunes agrupadas por categoría. Marca <strong>todas</strong> aquellas que realizas de forma frecuente y que consumen una fracción importante de tu tiempo.</li>
+                        <li>Para cada tarea que marques, más abajo se desplegarán opciones para que indiques:
+                            <ul style="margin-top: 10px; margin-left: 20px; list-style-type: disc;">
+                                <li><strong>Frecuencia:</strong> ¿Con qué periodicidad realizas esta tarea? (Diaria, Semanal, Mensual)</li>
+                                <li><strong>Dolor/Consumo de Tiempo:</strong> En una escala de 1 a 5, ¿cuánto "dolor" o tiempo consume esta tarea? (1 = Muy bajo, 5 = Muy alto)</li>
+                            </ul>
+                        </li>
+                    </ol>
+                     <p>Tómate tu tiempo para reflexionar sobre tus actividades diarias y semanales.</p>
+                </div>
+
+                <div class="workflow-category">
+                    <div class="category-header">Síntesis de Información y Análisis Legal</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_resumir_analizar_contratos" name="wf_resumir_analizar_contratos" data-workflow="Resumir y analizar contratos, escrituras y documentación legal">
+                            <label for="wf_resumir_analizar_contratos">Resumir y analizar contratos, escrituras y documentación legal</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_sintetizar_jurisprudencia" name="wf_sintetizar_jurisprudencia" data-workflow="Sintetizar jurisprudencia relevante para casos específicos">
+                            <label for="wf_sintetizar_jurisprudencia">Sintetizar jurisprudencia relevante para casos específicos</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_analizar_clausulas" name="wf_analizar_clausulas" data-workflow="Analizar y comparar cláusulas contractuales para identificar términos de mercado">
+                            <label for="wf_analizar_clausulas">Analizar y comparar cláusulas contractuales para identificar términos de mercado</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_due_diligence" name="wf_due_diligence" data-workflow="Due diligence legal y extraer riesgos críticos">
+                            <label for="wf_due_diligence">Due diligence legal y extraer riesgos críticos</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="workflow-category">
+                    <div class="category-header">Gestión de Comunicaciones</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_clasificar_correos_legales" name="wf_clasificar_correos_legales" data-workflow="Clasificar y priorizar correos electrónicos (consultas legales urgentes, plazos procesales, etc.)">
+                            <label for="wf_clasificar_correos_legales">Clasificar y priorizar correos electrónicos (consultas legales urgentes, plazos procesales, etc.)</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_redactar_respuestas_legales" name="wf_redactar_respuestas_legales" data-workflow="Redactar respuestas estándar y comunicaciones formales a solicitudes repetitivas">
+                            <label for="wf_redactar_respuestas_legales">Redactar respuestas estándar y comunicaciones formales a solicitudes repetitivas</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_documentar_reuniones" name="wf_documentar_reuniones" data-workflow="Documentar reuniones en memorándums legales, actas o minutas.">
+                            <label for="wf_documentar_reuniones">Documentar reuniones en memorándums legales, actas o minutas.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-category">
+                    <div class="category-header">Creación de Documentación Legal</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_generar_borradores_contratos" name="wf_generar_borradores_contratos" data-workflow="Generar primeros borradores de contratos estándar basados en templates">
+                            <label for="wf_generar_borradores_contratos">Generar primeros borradores de contratos estándar basados en templates</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_generar_reportes_expedientes" name="wf_generar_reportes_expedientes" data-workflow="Generación de reportes de estado de expedientes y casos">
+                            <label for="wf_generar_reportes_expedientes">Generación de reportes de estado de expedientes y casos</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_redactar_dictamenes" name="wf_redactar_dictamenes" data-workflow="Redactar dictámenes legales y opiniones jurídicas">
+                            <label for="wf_redactar_dictamenes">Redactar dictámenes legales y opiniones jurídicas</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_crear_memorandums_ejecutivos" name="wf_crear_memorandums_ejecutivos" data-workflow="Crear memorándums legales ejecutivos para directorios">
+                            <label for="wf_crear_memorandums_ejecutivos">Crear memorándums legales ejecutivos para directorios</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="workflow-category">
+                    <div class="category-header">Gestión y Análisis de Información Jurídica</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_gestion_litigios" name="wf_gestion_litigios" data-workflow="Gestión de litigios y causas, calendario procesal, evidencia digital y revisión asistida.">
+                            <label for="wf_gestion_litigios">Gestión de litigios y causas, calendario procesal, evidencia digital y revisión asistida.</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_crear_matrices_cumplimiento" name="wf_crear_matrices_cumplimiento" data-workflow="Crear matrices de cumplimiento regulatorio">
+                            <label for="wf_crear_matrices_cumplimiento">Crear matrices de cumplimiento regulatorio</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_analizar_tendencias_jurisprudenciales" name="wf_analizar_tendencias_jurisprudenciales" data-workflow="Analizar tendencias jurisprudenciales y precedentes">
+                            <label for="wf_analizar_tendencias_jurisprudenciales">Analizar tendencias jurisprudenciales y precedentes</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_gestionar_bases_datos_contratos" name="wf_gestionar_bases_datos_contratos" data-workflow="Gestionar bases de datos de modelos contractuales">
+                            <label for="wf_gestionar_bases_datos_contratos">Gestionar bases de datos de modelos contractuales</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-category">
+                    <div class="category-header">Monitoreo Regulatorio y Vigilancia Legal</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_monitorear_fuentes_regulatorias" name="wf_monitorear_fuentes_regulatorias" data-workflow="Monitorear fuentes sectoriales y regulatorias">
+                            <label for="wf_monitorear_fuentes_regulatorias">Monitorear fuentes sectoriales y regulatorias</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_analizar_proyectos_ley" name="wf_analizar_proyectos_ley" data-workflow="Analizar proyectos de ley y su impacto en el negocio">
+                            <label for="wf_analizar_proyectos_ley">Analizar proyectos de ley y su impacto en el negocio</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_investigacion_estrategica" name="wf_investigacion_estrategica" data-workflow="Investigación sobre temas estratégicos y tendencias">
+                            <label for="wf_investigacion_estrategica">Investigación sobre temas estratégicos y tendencias</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_vigilancia_jurisprudencia" name="wf_vigilancia_jurisprudencia" data-workflow="Vigilancia de jurisprudencia relevante y fallos plenarios">
+                            <label for="wf_vigilancia_jurisprudencia">Vigilancia de jurisprudencia relevante y fallos plenarios</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_monitoreo_boletines" name="wf_monitoreo_boletines" data-workflow="Monitoreo automatizado de boletines oficiales">
+                            <label for="wf_monitoreo_boletines">Monitoreo automatizado de boletines oficiales</label>
+                        </div>
+                         <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_vigilancia_marcas" name="wf_vigilancia_marcas" data-workflow="Vigilancia y gestión de marcas (INAPI), renovaciones y apoyo a oposiciones o defensas.">
+                            <label for="wf_vigilancia_marcas">Vigilancia y gestión de marcas (INAPI), renovaciones y apoyo a oposiciones o defensas.</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="workflow-category">
+                    <div class="category-header">Compliance Legal y Gestión</div>
+                    <div class="category-content">
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_atencion_derechos" name="wf_atencion_derechos" data-workflow="Atención de derechos de titulares, inventario de datos, registros y transferencias">
+                            <label for="wf_atencion_derechos">Atención de derechos de titulares, inventario de datos, registros y transferencias</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_due_diligence_proveedores" name="wf_due_diligence_proveedores" data-workflow="Due dilligence contractual, regulatorio y de seguridad a terceros y proveedores.">
+                            <label for="wf_due_diligence_proveedores">Due dilligence contractual, regulatorio y de seguridad a terceros y proveedores.</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_control_estudios_externos" name="wf_control_estudios_externos" data-workflow="Selección y control de estudios externos, e-billing y scorecards de desempeño.">
+                            <label for="wf_control_estudios_externos">Selección y control de estudios externos, e-billing y scorecards de desempeño.</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_kpis_gestion" name="wf_kpis_gestion" data-workflow="KPIs de carga, SLAs, riesgo y presupuesto para gestión y mejora continua.">
+                            <label for="wf_kpis_gestion">KPIs de carga, SLAs, riesgo y presupuesto para gestión y mejora continua.</label>
+                        </div>
+                        <div class="workflow-item">
+                            <input type="checkbox" class="workflow-checkbox" id="wf_control_plazos" name="wf_control_plazos" data-workflow="Control de plazos de prescripción y caducidad">
+                            <label for="wf_control_plazos">Control de plazos de prescripción y caducidad</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="workflowDetails" class="workflow-details">
+                    <h3>Detalles de workflows seleccionados:</h3>
+                    <div id="detailsContainer">
+                        </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">Workflows Adicionales No Listados (Opcional)</label>
+                    <p style="font-size: 0.9em; color: #555; margin-bottom:15px;">Si hay alguna tarea repetitiva importante que consumes mucho tiempo y no apareció en las listas anteriores, puedes agregar hasta <strong>dos</strong> aquí:</p>
+                    
+                    <div id="additionalWorkflows">
+                        </div>
+
+                    <button type="button" id="addWorkflowBtn" class="btn btn-secondary" onclick="addAdditionalWorkflow()" style="margin-top:15px;">+ Agregar Otro Workflow (Máx. 2)</button>
+                </div>
+                <div class="validation-message" id="validationMessageC">Debe seleccionar al menos un workflow y completar todos sus detalles (Frecuencia y Dolor). Si agrega workflows adicionales, también debe completar su descripción, frecuencia y dolor.</div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevBlock()">Anterior</button>
+                    <button class="btn btn-primary" onclick="nextBlock()">Siguiente</button>
+                </div>
+            </div>
+
+            <div class="block" id="blockC2">
+                <h2 class="block-title">Bloque C.2: Prototipado de Agentes</h2>
+                
+                <div class="intro-text">
+                    <p>Imagina que puedes construir un agente con IA que automatice parcial o totalmente alguna tarea o actividades de tu rol que hoy realizas de forma muy frecuente.</p>
+                    <p>De los workflows que seleccionaste en el paso anterior, arrastra y ordena aquellos que consideres con mayor prioridad para automatizar o aumentar con el uso de agentes de IA. Escoge el más importante arriba.</p>
+                    <p>Si seleccionaste más de 5, aparecerán los primeros 5 basados en tu selección. Si deseas cambiar cuáles aparecen aquí para rankear, puedes volver al paso anterior.</p>
+                    <p><strong>Arrastra para ordenar (el más importante primero):</strong></p>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">Ranking de Workflows Seleccionados</label>
+                    <div id="rankingList" class="ranking-list">
+                        <p>Los workflows que seleccionaste y detallaste aparecerán aquí para que los ordenes.</p>
+                    </div>
+                </div>
+                <div class="validation-message" id="validationMessageC2">Por favor ordena los workflows antes de continuar.</div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevBlock()">Anterior</button>
+                    <button class="btn btn-primary" onclick="nextBlock()">Siguiente</button>
+                </div>
+            </div>
+
+            <div class="block" id="blockD">
+                <h2 class="block-title">Bloque D: Perspectivas Finales</h2>
+
+                <div class="question" id="preguntaLiderNecesidadesIA" style="display: none;">
+                    <label class="question-label" for="lider_necesidades_ia_opcion1">
+                        1. Como líder, ¿cuáles consideras que son los <strong>tres principales elementos</strong> que tu equipo o área necesita para impulsar exitosamente la adopción y el uso efectivo de la Inteligencia Artificial Generativa?
+                        <span class="instruction">Por favor, selecciona hasta 3 opciones.</span>
+                    </label>
+                    <div class="checkbox-group" id="liderNecesidadesCheckboxGroup">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Capacitación y entrenamiento especializado para mi equipo en herramientas y aplicaciones de IA.">
+                            <span>Capacitación y entrenamiento especializado para mi equipo en herramientas y aplicaciones de IA.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Acompañamiento y consultoría externa para identificar casos de uso y estrategias de implementación.">
+                            <span>Acompañamiento y consultoría externa para identificar casos de uso y estrategias de implementación.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Definición de procesos claros y metodologías para la gestión del cambio y adopción de IA.">
+                            <span>Definición de procesos claros y metodologías para la gestión del cambio y adopción de IA.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Acceso a equipos o roles expertos en IA dentro de la organización (científicos de datos, ingenieros de IA).">
+                            <span>Acceso a equipos o roles expertos en IA dentro de la organización (científicos de datos, ingenieros de IA).</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Disponibilidad de plataformas tecnológicas y herramientas de IA robustas y seguras.">
+                            <span>Disponibilidad de plataformas tecnológicas y herramientas de IA robustas y seguras.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Casos de éxito y ejemplos concretos de aplicación de IA en funciones o industrias similares.">
+                            <span>Casos de éxito y ejemplos concretos de aplicación de IA en funciones o industrias similares.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Presupuesto dedicado y recursos financieros para invertir en proyectos de IA.">
+                            <span>Presupuesto dedicado y recursos financieros para invertir en proyectos de IA.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Mayor claridad sobre los aspectos éticos y de cumplimiento normativo relacionados con la IA.">
+                            <span>Mayor claridad sobre los aspectos éticos y de cumplimiento normativo relacionados con la IA.</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="lider_ia_necesidades" value="Otro" id="lider_ia_necesidad_otro_checkbox">
+                            <span>Otro (especificar):</span>
+                            <span class="otro-input-container">
+                                <input type="text" name="lider_ia_necesidades_otro_texto" id="lider_ia_necesidades_otro_texto" placeholder="Especifique aquí" style="display: none;">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label" for="principal_beneficio_d">
+                        <span class="question-number"></span>Pensando en los workflows que identificaste como importantes, ¿cuál crees que sería el <strong>principal beneficio</strong> de incorporar IA Generativa para automatizarlos o asistirlos?
+                    </label>
+                    <textarea id="principal_beneficio_d" name="principal_beneficio" rows="4" placeholder="Ej: Reducción significativa de tiempo, mejora en la calidad de entregables, poder enfocarme en tareas más estratégicas, etc."></textarea>
+                </div>
+
+                <div class="question">
+                    <label class="question-label" for="mayor_preocupacion_d">
+                         <span class="question-number"></span>¿Cuál es tu <strong>mayor preocupación o el principal reto</strong> que visualizas al pensar en implementar o usar más intensivamente la IA Generativa en tu trabajo diario o en tu equipo?
+                    </label>
+                    <textarea id="mayor_preocupacion_d" name="mayor_preocupacion" rows="4" placeholder="Ej: Curva de aprendizaje, seguridad de la información, calidad de los resultados de la IA, resistencia al cambio, costos, falta de conocimiento, etc."></textarea>
+                </div>
+
+                <div class="validation-message" id="validationMessageD">Por favor, completa las preguntas obligatorias de este bloque para finalizar.</div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevBlock()">Anterior</button>
+                    <button class="btn btn-primary" onclick="finishSurvey()">Finalizar Encuesta</button>
+                </div>
+            </div>
+
+            <div class="block" id="results">
+                <div class="completion-message">
+                    <h2 class="completion-title">¡Muchas gracias por tu tiempo y tus respuestas!</h2>
+                    <p class="completion-text">Tu participación es muy valiosa para nosotros. Los datos recopilados nos ayudarán a enfocar nuestros esfuerzos en adaptar los contenidos del programa Explora para que realmente aporten valor y faciliten el trabajo diario.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://otpzmnyurmsoyijmnxpy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90cHptbnl1cm1zb3lpam1ueHB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NjA1MDMsImV4cCI6MjA2OTEzNjUwM30.eri9pno-B-joZ9fND2fksI-4jhILhOfEk-TKJrtNlq0';
+        
+        // Inicializar Supabase
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        console.log('Supabase inicializado:', supabaseClient);
+        
+        // Variables globales
+        let currentBlock = 0;
+        let surveyData = {};
+        // selectedWorkflowsForRanking is populated in updateRankingList
+        let additionalWorkflowCount = 0; // Start at 0, increment before creating the first one
+
+        // Bloques de la encuesta
+        const blocks = ['intro', 'blockA', 'blockB', 'blockC', 'blockC2', 'blockD', 'results'];
+        // Unique IDs for validation messages for each block that needs one
+        const validationMessagesIds = {
+            'blockA': 'validationMessageA',
+            'blockB': 'validationMessageB',
+            'blockC': 'validationMessageC',
+            'blockC2': 'validationMessageC2',
+            'blockD': 'validationMessageD'
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateProgress();
+            showBlock(currentBlock); // Show the initial block (intro)
+        });
+
+        function setupEventListeners() {
+            // Listeners para opciones de radio
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', function(event) {
+                    const input = this.querySelector('input[type="radio"]');
+                    if (input && !input.checked) { // Only process if not already checked
+                        input.checked = true;
+                        const changeEvent = new Event('change', { bubbles: true });
+                        input.dispatchEvent(changeEvent);
+                    }
+                });
+            });
+             document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() { // Handles actual change
+                    document.querySelectorAll(`input[name="${this.name}"]`).forEach(otherRadio => {
+                        otherRadio.closest('.radio-option').classList.remove('selected');
+                    });
+                    if (this.checked) {
+                        this.closest('.radio-option').classList.add('selected');
+                    }
+                });
+            });
+
+            // Listeners para escalas Likert
+            document.querySelectorAll('.scale-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const scale = this.closest('.likert-scale');
+                    const hiddenInput = scale.parentElement.querySelector('input[type="hidden"]');
+                    
+                    scale.querySelectorAll('.scale-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    this.classList.add('selected');
+                    if (hiddenInput) {
+                        hiddenInput.value = value;
+                    }
+                });
+            });
+
+            // Listeners para workflows checkboxes
+            document.querySelectorAll('.workflow-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateWorkflowDetails(); 
+                });
+            });
+
+            // Listeners para la nueva pregunta de modelos de IA
+            const modelosIACheckboxes = document.querySelectorAll('input[name="modelos_ia_utilizados"]');
+            modelosIACheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // Handle "Ninguno" checkbox logic
+                    if (this.id === 'ninguno_checkbox' && this.checked) {
+                        // If "Ninguno" is selected, uncheck all other options
+                        modelosIACheckboxes.forEach(cb => {
+                            if (cb.id !== 'ninguno_checkbox') {
+                                cb.checked = false;
+                                cb.closest('.checkbox-option').classList.remove('selected');
+                            }
+                        });
+                    } else if (this.id !== 'ninguno_checkbox' && this.checked) {
+                        // If any other option is selected, uncheck "Ninguno"
+                        const ningunoCheckbox = document.getElementById('ninguno_checkbox');
+                        if (ningunoCheckbox && ningunoCheckbox.checked) {
+                            ningunoCheckbox.checked = false;
+                            ningunoCheckbox.closest('.checkbox-option').classList.remove('selected');
+                        }
+                    }
+                    
+                    // Update visual selection
+                    this.closest('.checkbox-option').classList.toggle('selected', this.checked);
+                });
+            });
+
+            // Listeners para la nueva pregunta condicional (lider_ia_necesidades)
+            const liderNecesidadesCheckboxes = document.querySelectorAll('#liderNecesidadesCheckboxGroup input[type="checkbox"]');
+            liderNecesidadesCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function(e) {
+                    const checkedCount = document.querySelectorAll('#liderNecesidadesCheckboxGroup input[type="checkbox"]:checked').length;
+                    if (checkedCount > 3) {
+                        this.checked = false; // Prevent checking more than 3
+                        const validationMsgElement = document.getElementById(validationMessagesIds['blockD']);
+                        if(validationMsgElement) {
+                            validationMsgElement.textContent = "Puedes seleccionar un máximo de 3 opciones para las necesidades de IA.";
+                            validationMsgElement.classList.add('show');
+                            setTimeout(() => {
+                                if (validationMsgElement.textContent === "Puedes seleccionar un máximo de 3 opciones para las necesidades de IA.") {
+                                     validationMsgElement.classList.remove('show');
+                                }
+                            }, 3000);
+                        }
+                    }
+                     // Handle "Otro" text input visibility
+                    if (this.id === 'lider_ia_necesidad_otro_checkbox') {
+                        document.getElementById('lider_ia_necesidades_otro_texto').style.display = this.checked ? 'block' : 'none';
+                        if (!this.checked) {
+                            document.getElementById('lider_ia_necesidades_otro_texto').value = '';
+                        }
+                    }
+                    // Update selected class for visual feedback
+                    this.closest('.checkbox-option').classList.toggle('selected', this.checked);
+                });
+            });
+        }
+
+        function nextBlock() {
+            if (!validateCurrentBlock()) {
+                return;
+            }
+            saveBlockData(); 
+            
+            const currentBlockId = blocks[currentBlock];
+            if (currentBlockId === 'blockC') { 
+                 updateRankingList(); 
+            }
+
+            currentBlock++;
+            if (currentBlock < blocks.length) {
+                showBlock(currentBlock);
+                updateProgress();
+            }
+        }
+
+        function prevBlock() {
+            if (currentBlock > 0) {
+                currentBlock--;
+                showBlock(currentBlock); 
+                updateProgress();
+            }
+        }
+        
+        function updateQuestionNumbersBlockD(isLiderQuestionVisible) {
+            const blockDElement = document.getElementById('blockD');
+            if (!blockDElement) return;
+
+            const questionsToNumber = [
+                blockDElement.querySelector('label[for="principal_beneficio_d"]'),
+                blockDElement.querySelector('label[for="mayor_preocupacion_d"]')
+            ].filter(el => el); 
+
+            let currentNumber = 1;
+            if (isLiderQuestionVisible) {
+                currentNumber = 2;
+            }
+
+            questionsToNumber.forEach(label => {
+                let numberSpan = label.querySelector('.question-number');
+                if (!numberSpan) {
+                    numberSpan = document.createElement('span');
+                    numberSpan.className = 'question-number';
+                    label.prepend(document.createTextNode(" ")); 
+                    label.prepend(numberSpan);
+                }
+                numberSpan.textContent = `${currentNumber}. `;
+                currentNumber++;
+            });
+        }
+
+
+        function showBlock(index) {
+            document.querySelectorAll('.block').forEach(block => {
+                block.classList.remove('active');
+            });
+            const blockIdToShow = blocks[index];
+            const blockElementToShow = document.getElementById(blockIdToShow);
+
+            if (blockElementToShow) {
+                if (blockIdToShow === 'blockD') {
+                    const tamanoEquipo = surveyData['tamano_equipo'];
+                    const preguntaLiderElement = document.getElementById('preguntaLiderNecesidadesIA');
+                    const isLiderQuestionVisible = (tamanoEquipo && tamanoEquipo !== "0");
+
+                    if (preguntaLiderElement) {
+                        preguntaLiderElement.style.display = isLiderQuestionVisible ? 'block' : 'none';
+                    }
+                    updateQuestionNumbersBlockD(isLiderQuestionVisible);
+                }
+                blockElementToShow.classList.add('active');
+                window.scrollTo(0, 0); 
+            }
+        }
+
+
+        function updateProgress() {
+            const surveySteps = blocks.length - 2; 
+            let completedSteps = currentBlock -1; 
+            if (currentBlock === 0) completedSteps = -1; 
+            if (currentBlock === blocks.length -1) completedSteps = surveySteps; 
+
+            let progressPercentage = 0;
+            if (completedSteps >= 0 && surveySteps > 0) {
+                 progressPercentage = (completedSteps / surveySteps) * 100;
+            }
+             if (currentBlock === blocks.length -1) progressPercentage = 100;
+
+            document.getElementById('progressFill').style.width = Math.min(100, Math.max(0, progressPercentage)) + '%';
+        }
+
+        function validateCurrentBlock() {
+            const blockId = blocks[currentBlock];
+            const validationMessageId = validationMessagesIds[blockId];
+            let validationMessageElement = null;
+            if (validationMessageId) {
+                 validationMessageElement = document.getElementById(validationMessageId);
+            }
+            
+            let isValid = true;
+
+            if (validationMessageElement) {
+                validationMessageElement.textContent = 'Por favor, responde todas las preguntas obligatorias de este bloque para continuar.'; // Default message
+                validationMessageElement.classList.remove('show'); 
+            }
+
+            switch(blockId) {
+                case 'blockA':
+                    const requiredTextA = ['nombre_completo', 'cargo_actual', 'area_departamento']; // Updated fields
+                    requiredTextA.forEach(fieldName => {
+                        const input = document.querySelector(`#${blockId} [name="${fieldName}"]`);
+                        if (!input || !input.value.trim()) isValid = false;
+                    });
+                    if (!document.querySelector(`#${blockId} [name="tamano_equipo"]:checked`)) isValid = false;
+                    if (!document.querySelector(`#${blockId} [name="tiempo_operativo"]:checked`)) isValid = false;
+                    if (!document.getElementById('familiaridadScore').value) isValid = false;
+                    break;
+
+                case 'blockB':
+                    const likertInputsB = ['b1_1', 'b1_2', 'b1_3', 'b1_4', 'b2_1', 'b2_2', 'b2_3', 'b3_1', 'b3_2', 'b3_3', 'b3_4', 'b3_5'];
+                    
+                    likertInputsB.forEach(fieldName => {
+                        const input = document.querySelector(`#${blockId} input[name="${fieldName}"]`);
+                        if (input && !input.value) { 
+                            isValid = false;
+                        }
+                    });
+                    break;
+
+                case 'blockC':
+                    const selectedCheckboxes = document.querySelectorAll('#blockC .workflow-checkbox:checked');
+                    if (selectedCheckboxes.length === 0) {
+                        isValid = false;
+                        if (validationMessageElement) validationMessageElement.textContent = 'Debe seleccionar al menos un workflow.';
+                    } else {
+                        selectedCheckboxes.forEach(checkbox => {
+                            const workflowName = checkbox.dataset.workflow;
+                            const workflowId = workflowName.replace(/\s+/g, '_'); 
+                            const freqInput = document.querySelector(`#detailsContainer select[name="freq_${workflowId}"]`);
+                            const dolorInput = document.querySelector(`#detailsContainer select[name="dolor_${workflowId}"]`);
+
+                            if (!freqInput || !freqInput.value || 
+                                !dolorInput || !dolorInput.value) {
+                                isValid = false;
+                                if (validationMessageElement) validationMessageElement.textContent = `Complete los detalles (Frecuencia y Dolor) para el workflow: "${workflowName}".`;
+                            }
+                        });
+                    }
+                    // Validate additional workflows if any
+                    const additionalWorkflowElements = document.querySelectorAll('#additionalWorkflows .additional-workflow');
+                    additionalWorkflowElements.forEach((wfElement) => {
+                        const descInput = wfElement.querySelector(`input[name^="additional_desc_"]`);
+                        const freqInput = wfElement.querySelector(`select[name^="additional_freq_"]`);
+                        const dolorInput = wfElement.querySelector(`select[name^="additional_dolor_"]`);
+                        if (descInput && descInput.value.trim()) {
+                            if (!freqInput || !freqInput.value || !dolorInput || !dolorInput.value) {
+                                isValid = false;
+                                if (validationMessageElement) validationMessageElement.textContent = `Complete Frecuencia y Dolor para el workflow adicional "${descInput.value.trim()}".`;
+                            }
+                        }
+                    });
+                    break;
+                case 'blockC2': 
+                    // No additional validation needed for C2 now
+                    break;
+                case 'blockD':
+                    const preguntaLiderElement = document.getElementById('preguntaLiderNecesidadesIA');
+                    if (preguntaLiderElement && preguntaLiderElement.style.display !== 'none') {
+                        const liderNecesidadesChecked = document.querySelectorAll('#liderNecesidadesCheckboxGroup input[type="checkbox"]:checked').length;
+                        if (liderNecesidadesChecked === 0 || liderNecesidadesChecked > 3) {
+                            isValid = false;
+                            if (validationMessageElement) validationMessageElement.textContent = 'Por favor, seleccione de 1 a 3 opciones para las necesidades de IA como líder.';
+                        }
+                        const otroCheckbox = document.getElementById('lider_ia_necesidad_otro_checkbox');
+                        const otroTexto = document.getElementById('lider_ia_necesidades_otro_texto');
+                        if (otroCheckbox && otroCheckbox.checked && (!otroTexto || !otroTexto.value.trim())) {
+                            isValid = false;
+                             if (validationMessageElement && isValid) { // Only set if not already set by count error
+                                validationMessageElement.textContent = 'Si selecciona "Otro" para las necesidades de IA, por favor especifique el texto.';
+                             } else if (validationMessageElement && !isValid && liderNecesidadesChecked > 0 && liderNecesidadesChecked <=3) {
+                                // If previous error was about count, but count is now fine, then this is the new error
+                                validationMessageElement.textContent = 'Si selecciona "Otro" para las necesidades de IA, por favor especifique el texto.';
+                             }
+                        }
+                    }
+                     if (!document.querySelector(`#${blockId} [name="principal_beneficio"]`)?.value.trim() ||
+                        !document.querySelector(`#${blockId} [name="mayor_preocupacion"]`)?.value.trim()) {
+                        if(isValid && validationMessageElement) { // Only set if not already invalid by "lider" question
+                            validationMessageElement.textContent = 'Por favor, complete las preguntas sobre el principal beneficio y la mayor preocupación.';
+                        }
+                        isValid = false;
+                    }
+                    break;
+            }
+
+            if (!isValid && validationMessageElement) {
+                validationMessageElement.classList.add('show');
+            }
+            return isValid;
+        }
+
+        function saveBlockData() {
+            const currentBlockElement = document.getElementById(blocks[currentBlock]);
+            if (!currentBlockElement) return;
+
+            const inputs = currentBlockElement.querySelectorAll('input, select, textarea');
+             // Clear previous lider_ia_necesidades for Block D before saving new ones
+            if (blocks[currentBlock] === 'blockD') {
+                surveyData.lider_ia_necesidades = [];
+            }
+            // Clear modelos_ia_utilizados before re-saving
+            if (blocks[currentBlock] === 'blockA') {
+                surveyData.modelos_ia_utilizados = [];
+            }
+
+            inputs.forEach(input => {
+                const name = input.name;
+                if (!name) return; 
+
+                if (input.type === 'radio') {
+                    if (input.checked) surveyData[name] = input.value;
+                } else if (input.type === 'checkbox' && input.classList.contains('workflow-checkbox')) {
+                    // Handled by workflow_details
+                } else if (input.type === 'checkbox' && name === 'modelos_ia_utilizados') {
+                    // Handle multiple checkbox selections for AI models
+                    if (!surveyData.modelos_ia_utilizados) surveyData.modelos_ia_utilizados = [];
+                    if (input.checked && !surveyData.modelos_ia_utilizados.includes(input.value)) {
+                        surveyData.modelos_ia_utilizados.push(input.value);
+                    }
+                } else if (input.type === 'hidden') { 
+                     surveyData[name] = input.value;
+                } else if (input.tagName === 'SELECT' && (name.startsWith('freq_') || name.startsWith('dolor_'))) {
+                    const detailType = name.substring(0, name.indexOf('_')); 
+                    const workflowId = name.substring(name.indexOf('_') + 1);
+                    let originalWorkflowName = "";
+                    document.querySelectorAll('.workflow-checkbox').forEach(cb => {
+                        if (cb.dataset.workflow.replace(/\s+/g, '_') === workflowId) {
+                            originalWorkflowName = cb.dataset.workflow;
+                        }
+                    });
+                    if (originalWorkflowName) {
+                        if (!surveyData.workflow_details) surveyData.workflow_details = {};
+                        if (!surveyData.workflow_details[originalWorkflowName]) surveyData.workflow_details[originalWorkflowName] = {name: originalWorkflowName};
+                        surveyData.workflow_details[originalWorkflowName][detailType] = input.value;
+                    }
+                } else if (name.startsWith('additional_')) { 
+                     if (!surveyData.additional_workflows_data) surveyData.additional_workflows_data = {};
+                     const parts = name.split('_'); 
+                     const field = parts[1];
+                     const index = parts[2];
+                     if (!surveyData.additional_workflows_data[index]) surveyData.additional_workflows_data[index] = {};
+                     surveyData.additional_workflows_data[index][field] = input.value;
+                } else if (name === 'lider_ia_necesidades') { 
+                    if (input.checked && input.value !== "Otro") {
+                        surveyData.lider_ia_necesidades.push(input.value);
+                    }
+                } else if (name === 'lider_ia_necesidades_otro_texto') {
+                    const otroCheckbox = document.getElementById('lider_ia_necesidad_otro_checkbox');
+                    if (otroCheckbox && otroCheckbox.checked && input.value.trim()) {
+                        // Ensure 'lider_ia_necesidades' array exists
+                        if (!surveyData.lider_ia_necesidades) surveyData.lider_ia_necesidades = []; 
+                        // Check if "Otro: " is already prepended to avoid duplicates on resave
+                        const existingOtro = surveyData.lider_ia_necesidades.find(item => item.startsWith("Otro:"));
+                        if (existingOtro) { // Remove old "Otro" before adding new one
+                           surveyData.lider_ia_necesidades = surveyData.lider_ia_necesidades.filter(item => !item.startsWith("Otro:"));
+                        }
+                        surveyData.lider_ia_necesidades.push(`Otro: ${input.value.trim()}`);
+                    }
+                }
+                 else { 
+                    surveyData[name] = input.value.trim();
+                }
+            });
+
+            if (blocks[currentBlock] === 'blockC') {
+                surveyData.selected_workflows_for_ranking = Array.from(document.querySelectorAll('#blockC .workflow-checkbox:checked'))
+                    .map(cb => cb.dataset.workflow);
+            }
+            
+            if (blocks[currentBlock] === 'blockC2') {
+                const rankedItems = document.querySelectorAll('#rankingList .ranking-item');
+                surveyData.ranked_workflows_order = Array.from(rankedItems).map(item => ({
+                    name: item.dataset.workflow,
+                    isAdditional: item.dataset.isAdditional === 'true'
+                }));
+            }
+             console.log("Survey Data after block " + blocks[currentBlock] + ":", JSON.parse(JSON.stringify(surveyData)));
+        }
+
+        function updateWorkflowDetails() {
+            const selectedCheckboxes = document.querySelectorAll('#blockC .workflow-checkbox:checked');
+            const detailsContainer = document.getElementById('detailsContainer');
+            const workflowDetailsSection = document.getElementById('workflowDetails');
+            
+            detailsContainer.innerHTML = ''; 
+
+            if (selectedCheckboxes.length > 0) {
+                workflowDetailsSection.classList.add('active');
+                
+                selectedCheckboxes.forEach(checkbox => {
+                    const workflowName = checkbox.dataset.workflow;
+                    const workflowId = workflowName.replace(/\s+/g, '_'); 
+                    
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'detail-row-container'; 
+                    
+                    const savedDetails = surveyData.workflow_details ? surveyData.workflow_details[workflowName] : null;
+                    const savedFreq = savedDetails?.freq || "";
+                    const savedDolor = savedDetails?.dolor || "";
+
+                    detailDiv.innerHTML = `
+                        <div>${workflowName}</div> <div class="detail-row">
+                            <div class="detail-item">
+                                <label for="freq_${workflowId}">Frecuencia</label>
+                                <select id="freq_${workflowId}" name="freq_${workflowId}" required>
+                                    <option value="" ${savedFreq === "" ? "selected" : ""}>Seleccionar...</option>
+                                    <option value="D" ${savedFreq === "D" ? "selected" : ""}>Diario</option>
+                                    <option value="S" ${savedFreq === "S" ? "selected" : ""}>Semanal</option>
+                                    <option value="M" ${savedFreq === "M" ? "selected" : ""}>Mensual</option>
+                                </select>
+                            </div>
+                            <div class="detail-item">
+                                <label for="dolor_${workflowId}">Dolor/Consumo de Tiempo (1-5)</label>
+                                <select id="dolor_${workflowId}" name="dolor_${workflowId}" required>
+                                    <option value="" ${savedDolor === "" ? "selected" : ""}>Seleccionar...</option>
+                                    <option value="1" ${savedDolor === "1" ? "selected" : ""}>1 - Muy bajo</option>
+                                    <option value="2" ${savedDolor === "2" ? "selected" : ""}>2 - Bajo</option>
+                                    <option value="3" ${savedDolor === "3" ? "selected" : ""}>3 - Medio</option>
+                                    <option value="4" ${savedDolor === "4" ? "selected" : ""}>4 - Alto</option>
+                                    <option value="5" ${savedDolor === "5" ? "selected" : ""}>5 - Muy alto</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                    detailsContainer.appendChild(detailDiv);
+                });
+            } else {
+                workflowDetailsSection.classList.remove('active');
+            }
+        }
+
+        function updateRankingList() {
+            const rankingList = document.getElementById('rankingList');
+            const workflowsToRank = surveyData.selected_workflows_for_ranking || [];
+            
+            // Create an array with workflows and their pain scores
+            let workflowsWithScores = [];
+            
+            // Add selected workflows with their pain scores
+            workflowsToRank.forEach(workflowName => {
+                const details = surveyData.workflow_details?.[workflowName];
+                if (details && details.dolor) {
+                    workflowsWithScores.push({
+                        name: workflowName,
+                        dolor: parseInt(details.dolor),
+                        isAdditional: false
+                    });
+                }
+            });
+            
+            // Add additional workflows with high pain (4 or 5)
+            if (surveyData.additional_workflows_data) {
+                Object.keys(surveyData.additional_workflows_data).forEach(key => {
+                    const additionalWf = surveyData.additional_workflows_data[key];
+                    if (additionalWf.desc && additionalWf.dolor && parseInt(additionalWf.dolor) >= 4) {
+                        workflowsWithScores.push({
+                            name: additionalWf.desc,
+                            dolor: parseInt(additionalWf.dolor),
+                            isAdditional: true
+                        });
+                    }
+                });
+            }
+            
+            // Sort by pain score (descending) - highest pain first
+            workflowsWithScores.sort((a, b) => b.dolor - a.dolor);
+            
+            // Take only the first 5
+            const displayableWorkflows = workflowsWithScores.slice(0, 5);
+
+            if (displayableWorkflows.length === 0) {
+                rankingList.innerHTML = '<p>No has seleccionado workflows en el paso anterior. Vuelve al paso C para seleccionar y detallar workflows.</p>';
+                return;
+            }
+
+            rankingList.innerHTML = ''; 
+            displayableWorkflows.forEach((workflow, index) => {
+                const item = document.createElement('div');
+                item.className = 'ranking-item';
+                item.draggable = true;
+                item.dataset.workflow = workflow.name;
+                item.dataset.isAdditional = workflow.isAdditional;
+                item.innerHTML = `
+                    <span>${index + 1}.</span>
+                    <span>${workflow.name}</span>
+                    <span>&#x2630;</span> `;
+                rankingList.appendChild(item);
+            });
+            setupDragAndDrop();
+        }
+
+        let draggedElement = null;
+        function setupDragAndDrop() {
+            const rankingList = document.getElementById('rankingList');
+            if (!rankingList) return;
+            const items = rankingList.querySelectorAll('.ranking-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedElement = item;
+                    setTimeout(() => item.classList.add('dragging'), 0); 
+                     e.dataTransfer.effectAllowed = 'move';
+                });
+                item.addEventListener('dragend', () => {
+                    draggedElement?.classList.remove('dragging');
+                    draggedElement = null;
+                    updateRankingNumbers();
+                });
+            });
+
+            rankingList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(rankingList, e.clientY);
+                if (draggedElement) { 
+                    if (afterElement == null) {
+                        rankingList.appendChild(draggedElement);
+                    } else {
+                        rankingList.insertBefore(draggedElement, afterElement);
+                    }
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.ranking-item:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+
+        function updateRankingNumbers() {
+            const items = document.querySelectorAll('#rankingList .ranking-item');
+            items.forEach((item, index) => {
+                const numberSpan = item.querySelector('span:first-child'); 
+                if (numberSpan) numberSpan.textContent = `${index + 1}.`;
+            });
+        }
+
+        function addAdditionalWorkflow() {
+            if (additionalWorkflowCount >= 2) { 
+                 document.getElementById('addWorkflowBtn').style.display = 'none';
+                 return;
+            }
+            additionalWorkflowCount++;
+            const container = document.getElementById('additionalWorkflows');
+            const workflowDiv = document.createElement('div');
+            workflowDiv.className = 'additional-workflow'; 
+            workflowDiv.id = `additional_wf_container_${additionalWorkflowCount}`;
+            
+            workflowDiv.innerHTML = `
+                <h4>Workflow Adicional #${additionalWorkflowCount}</h4>
+                <div class="form-group">
+                    <label for="additional_desc_${additionalWorkflowCount}">Descripción breve de la tarea (Ej: Transcribir audios de entrevistas)</label>
+                    <input type="text" id="additional_desc_${additionalWorkflowCount}" name="additional_desc_${additionalWorkflowCount}" maxlength="150" placeholder="Describe brevemente el workflow">
+                </div>
+                <div class="form-group">
+                    <label for="additional_output_${additionalWorkflowCount}">Output o resultado esperado de esta tarea (Ej: Texto transcrito en un documento)</label>
+                    <textarea id="additional_output_${additionalWorkflowCount}" name="additional_output_${additionalWorkflowCount}" rows="2" placeholder="¿Qué resultado esperas obtener?"></textarea>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-item">
+                        <label for="additional_freq_${additionalWorkflowCount}">Frecuencia</label>
+                        <select id="additional_freq_${additionalWorkflowCount}" name="additional_freq_${additionalWorkflowCount}">
+                            <option value="">Seleccionar...</option>
+                            <option value="D">Diario</option>
+                            <option value="S">Semanal</option>
+                            <option value="M">Mensual</option>
+                            <option value="O">Ocasional</option>
+                        </select>
+                    </div>
+                    <div class="detail-item">
+                        <label for="additional_dolor_${additionalWorkflowCount}">Dolor/Consumo de Tiempo (1-5)</label>
+                        <select id="additional_dolor_${additionalWorkflowCount}" name="additional_dolor_${additionalWorkflowCount}">
+                            <option value="">Seleccionar...</option>
+                            <option value="1">1 - Muy bajo</option>
+                            <option value="2">2 - Bajo</option>
+                            <option value="3">3 - Medio</option>
+                            <option value="4">4 - Alto</option>
+                            <option value="5">5 - Muy alto</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" onclick="removeAdditionalWorkflow(${additionalWorkflowCount})" class="btn-remove-wf">Eliminar este Workflow Adicional</button>
+            `;
+            container.appendChild(workflowDiv);
+            if (additionalWorkflowCount >= 2) {
+                document.getElementById('addWorkflowBtn').style.display = 'none';
+            }
+        }
+
+        function removeAdditionalWorkflow(idToRemove) {
+            const workflowToRemove = document.getElementById(`additional_wf_container_${idToRemove}`);
+            if (workflowToRemove) {
+                workflowToRemove.remove();
+                additionalWorkflowCount--; 
+                 if(additionalWorkflowCount < 2) {
+                    document.getElementById('addWorkflowBtn').style.display = 'block';
+                 }
+            }
+        }
+
+        async function finishSurvey() {
+            if (!validateCurrentBlock()) return;
+            saveBlockData();
+            console.log("Final Survey Data to be 'sent':", JSON.parse(JSON.stringify(surveyData)));
+            
+            const submitButton = document.querySelector("#blockD .btn-primary");
+            submitButton.disabled = true;
+            submitButton.textContent = "Enviando...";
+            
+            // Mostrar pantalla de enviando
+            currentBlock = blocks.indexOf('results');
+            showBlock(currentBlock);
+            updateProgress();
+            
+            const resultsBlock = document.getElementById("results");
+            resultsBlock.innerHTML = `
+                <div class="completion-message">
+                    <h2 class="completion-title">Enviando respuestas...</h2>
+                    <p class="completion-text">Por favor espera un momento mientras guardamos tus respuestas.</p>
+                </div>
+            `;
+            
+            try {
+                // --- PREPARACIÓN DE DATOS ---
+                let todosLosWorkflows = [];
+                if (surveyData.workflow_details) {
+                    todosLosWorkflows = Object.values(surveyData.workflow_details);
+                }
+                if (surveyData.additional_workflows_data) {
+                    Object.values(surveyData.additional_workflows_data).forEach((wf) => {
+                        if (wf.desc && wf.desc.trim() !== "") {
+                            todosLosWorkflows.push({
+                                name: `(Adicional) ${wf.desc.trim()}`,
+                                output: wf.output ? wf.output.trim() : "",
+                                freq: wf.freq || "",
+                                dolor: wf.dolor || "",
+                                nivel: "N/A",
+                            });
+                        }
+                    });
+                }
+                
+                let necesidadesLider = [];
+                const liderCheckboxes = document.querySelectorAll(
+                    'input[name="lider_ia_necesidades"]:checked'
+                );
+                liderCheckboxes.forEach((cb) => {
+                    if (cb.value === "Otro") {
+                        const otroTexto = document
+                            .getElementById("lider_ia_necesidades_otro_texto")
+                            ?.value.trim();
+                        if (otroTexto) {
+                            necesidadesLider.push(`Otro: ${otroTexto}`);
+                        }
+                    } else {
+                        necesidadesLider.push(cb.value);
+                    }
+                });
+                
+                // Preparar datos para Supabase
+                const dataToSend = {
+                    // Metadatos
+                    institucion: 'Falabella_legal', // Cambiar según la institución
+                    tipo_encuesta: 'inicio',
+                    
+                    // Datos básicos
+                    nombre_completo: surveyData.nombre_completo || '',
+                    cargo_actual: surveyData.cargo_actual || '',
+                    area_departamento: surveyData.area_departamento || '',
+                    tamano_equipo: surveyData.tamano_equipo || '',
+                    tiempo_operativo: surveyData.tiempo_operativo || '',
+                    familiaridad_score: parseInt(surveyData.familiaridad_score) || null,
+                    
+                    // Campos de conocimiento (mapeo correcto)
+                    conocimiento_llm: parseInt(surveyData.b1_1) || null,
+                    conocimiento_prompts: parseInt(surveyData.b1_2) || null,
+                    conocimiento_agentes: parseInt(surveyData.b1_3) || null,
+                    conocimiento_rag: null, // No existe en encuesta inicio actual
+                    
+                    // Campos organizacionales (mapeo correcto)
+                    org_lineamientos_ia: parseInt(surveyData.b2_1) || null,
+                    org_acceso_herramientas: parseInt(surveyData.b2_2) || null,
+                    org_impulso_direccion: parseInt(surveyData.b2_3) || null,
+                    
+                    // Campos de percepción personal (mapeo correcto)
+                    percep_confianza_curiosidad: parseInt(surveyData.b3_1) || null,
+                    percep_preocupa_reemplazo: parseInt(surveyData.b3_2) || null,
+                    percep_preocupa_privacidad: parseInt(surveyData.b3_3) || null,
+                    percep_capacidad_aprender: parseInt(surveyData.b3_4) || null,
+                    percep_equipo_receptivo: parseInt(surveyData.b3_5) || null,
+                    
+                    // Workflows como JSONB
+                    workflows: todosLosWorkflows,
+                    
+                    // Perspectivas
+                    lider_ia_necesidades: necesidadesLider.join(" | "),
+                    principal_beneficio: surveyData.principal_beneficio || '',
+                    mayor_preocupacion: surveyData.mayor_preocupacion || '',
+                    ideas_ia: surveyData.ideas_ia || '',
+                    
+                    // Campos adicionales como JSONB
+                    respuestas_especificas: {
+                        modelos_ia_utilizados: surveyData.modelos_ia_utilizados || [],
+                        ranking_workflows: surveyData.ranked_workflows_order || []
+                    }
+                };
+                
+                console.log('Datos a enviar a Supabase:', dataToSend);
+                
+                // Enviar a Supabase
+                const { data, error } = await supabaseClient
+                    .from('encuestas_unificadas')
+                    .insert([dataToSend]);
+                
+                if (error) {
+                    console.error('Error al guardar en Supabase:', error);
+                    throw error;
+                } else {
+                    console.log('Datos guardados exitosamente:', data);
+                    
+                    // Mostrar mensaje de éxito
+                    resultsBlock.innerHTML = `
+                        <div class="completion-message">
+                            <h2 class="completion-title">¡Gracias por completar la encuesta!</h2>
+                            <p class="completion-text">Tus respuestas han sido registradas exitosamente.</p>
+                            <p class="completion-text">Pronto recibirás los resultados y recomendaciones personalizadas.</p>
+                            <button class="btn btn-primary" onclick="downloadResults()">Descargar Copia de Respuestas</button>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error al enviar la encuesta:', error);
+                
+                // Mostrar mensaje de error
+                resultsBlock.innerHTML = `
+                    <div class="completion-message">
+                        <h2 class="completion-title">Error al enviar la encuesta</h2>
+                        <p class="completion-text">Hubo un problema al guardar tus respuestas. Por favor, intenta nuevamente.</p>
+                        <button class="btn btn-primary" onclick="location.reload()">Reintentar</button>
+                        <button class="btn btn-secondary" onclick="downloadResults()">Descargar Respuestas</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function downloadResults() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(surveyData, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `encuesta_ia_resultados_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchorNode); 
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function restartSurvey() {
+            if (confirm('¿Estás seguro de que quieres reiniciar la encuesta? Se perderán todos los datos ingresados.')) {
+                surveyData = {}; 
+                currentBlock = 0; 
+                additionalWorkflowCount = 0; 
+                
+                document.getElementById('detailsContainer').innerHTML = '';
+                document.getElementById('rankingList').innerHTML = '<p>Los workflows que seleccionaste y detallaste aparecerán aquí para que los ordenes.</p>';
+                document.getElementById('additionalWorkflows').innerHTML = '';
+                document.getElementById('addWorkflowBtn').style.display = 'block';
+
+                const formElementsContainer = document.querySelector('.survey-content'); 
+                if (formElementsContainer) {
+                    formElementsContainer.querySelectorAll('input[type="text"], input[type="number"], textarea, input[type="hidden"]').forEach(input => input.value = '');
+                    formElementsContainer.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => input.checked = false);
+                    formElementsContainer.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+                }
+                
+                document.querySelectorAll('.radio-option.selected, .scale-option.selected, .checkbox-option.selected').forEach(el => el.classList.remove('selected'));
+                
+                const liderQuestion = document.getElementById('preguntaLiderNecesidadesIA');
+                if(liderQuestion) liderQuestion.style.display = 'none';
+                const otroTextoLider = document.getElementById('lider_ia_necesidades_otro_texto');
+                if(otroTextoLider) {
+                    otroTextoLider.style.display = 'none';
+                    otroTextoLider.value = '';
+                }
+                
+                document.querySelectorAll('.validation-message.show').forEach(msg => msg.classList.remove('show'));
+                document.querySelectorAll('.workflow-details.active').forEach(el => el.classList.remove('active'));
+
+                showBlock(currentBlock);
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+    </script>
+</body>
+</html>
