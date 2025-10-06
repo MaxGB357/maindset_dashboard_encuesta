@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/mgarc/OneDrive/Documentos/AAA Code/maindset_dashboard_encuesta/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
